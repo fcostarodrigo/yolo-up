@@ -29,7 +29,6 @@
   },
   "homepage": "https://github.com/fcostarodrigo/yolo-up#readme",
   "dependencies": {
-    "@fcostarodrigo/nuke": "^3.0.1",
     "yargs": "^16.1.0"
   },
   "devDependencies": {

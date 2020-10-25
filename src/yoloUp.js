@@ -2,7 +2,6 @@
 
 const fs = require("fs").promises;
 const { spawn } = require("child_process");
-const nuke = require("@fcostarodrigo/nuke");
 
 function spawnPromise(command, args, options) {
   return new Promise((resolve, reject) => {
@@ -12,6 +11,23 @@ function spawnPromise(command, args, options) {
   });
 }
 
+async function removeTry(file) {
+  try {
+    const stat = await fs.stat(file);
+    console.log(`Removing ${file}`);
+
+    if (stat.isDirectory()) {
+      await fs.rmdir(file, { recursive: true });
+    } else {
+      await fs.unlink(file);
+    }
+  } catch (error) {
+    if (error.code !== "ENOENT") {
+      console.error(error);
+    }
+  }
+}
+
 async function yoloUp({ projectRoot }) {
   process.chdir(projectRoot);
 
@@ -19,11 +35,13 @@ async function yoloUp({ projectRoot }) {
   const devDependencies = Object.keys(packageJson.devDependencies || {});
   const dependencies = Object.keys(packageJson.dependencies || {});
 
-  console.log("Removing node modules");
-  await nuke("node_modules");
+  await removeTry("node_modules");
+  await removeTry("package-lock.json");
 
-  console.log("Removing package-lock.json");
-  await nuke("package-lock.json");
+  console.log("Removing dependencies from package.json");
+  packageJson.dependencies = {};
+  packageJson.devDependencies = {};
+  await fs.writeFile("package.json", JSON.stringify(packageJson, null, 2));
 
   console.log("Installing dependencies");
   await spawnPromise("npm", ["install", ...dependencies], { stdio: "inherit" });
