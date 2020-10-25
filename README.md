@@ -1,34 +1,27 @@
-# Template
+# Yolo Up
 
-Brief description of the package.
+Update dependencies of a npm package.
+
+- Delete `node_packages`, `package-lock.json`, list all dependencies and install them again to the latest version.
 
 ## Setup
 
 ```bash
-npm install template
+npm install yolo-up -g
 ```
 
 ## Usage
 
-```js
-const template = require("template");
-
-async function main() {
-  await template();
-}
-
-main();
 ```
+yolo-up [projectRoot]
 
-## Documentation
+Positionals:
+  projectRoot  Path of project root                      [string] [default: "."]
 
-```js
-template(arg);
+Options:
+  --help     Show help                                                 [boolean]
+  --version  Show version number                                       [boolean]
 ```
-
-`arg`: Description of the argument.
-
-Description of the return and any side-effects.
 
 ## License
 

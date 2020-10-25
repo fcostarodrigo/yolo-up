@@ -1,41 +1,50 @@
 {
-  "name": "template",
-  "version": "1.0.2",
-  "description": "Template",
-  "main": "index.js",
+  "name": "yolo-up",
+  "version": "1.0.0",
+  "description": "Update dependencies of a npm package.",
+  "main": "src/yoloUp.js",
   "scripts": {
     "test": "jest unit int --coverage",
     "pretest": "eslint src",
     "format": "prettier --write ."
   },
+  "bin": "src/cli.js",
   "publishConfig": {
     "access": "public"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/fcostarodrigo/template.git"
+    "url": "git+https://github.com/fcostarodrigo/yolo-up.git"
   },
-  "keywords": [],
-  "author": "",
+  "keywords": [
+    "update",
+    "dependencies",
+    "npm",
+    "package"
+  ],
+  "author": "Rodrigo Fernandes da Costa",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/fcostarodrigo/template/issues"
+    "url": "https://github.com/fcostarodrigo/yolo-up/issues"
   },
-  "homepage": "https://github.com/fcostarodrigo/template#readme",
-  "dependencies": {},
+  "homepage": "https://github.com/fcostarodrigo/yolo-up#readme",
+  "dependencies": {
+    "@fcostarodrigo/nuke": "^3.0.1",
+    "yargs": "^16.1.0"
+  },
   "devDependencies": {
-    "@types/jest": "^26.0.14",
-    "@types/node": "^14.11.2",
-    "eslint": "^7.10.0",
+    "@types/jest": "^26.0.15",
+    "@types/node": "^14.14.2",
+    "eslint": "^7.12.0",
     "eslint-config-airbnb-base": "^14.2.0",
-    "eslint-config-prettier": "^6.12.0",
+    "eslint-config-prettier": "^6.14.0",
     "eslint-plugin-import": "^2.22.1",
-    "eslint-plugin-jest": "^24.0.2",
+    "eslint-plugin-jest": "^24.1.0",
     "eslint-plugin-prettier": "^3.1.4",
     "eslint-plugin-tsc": "^2.0.0",
     "husky": "^4.3.0",
-    "jest": "^26.4.2",
-    "lint-staged": "^10.4.0",
+    "jest": "^26.6.1",
+    "lint-staged": "^10.4.2",
     "prettier": "^2.1.2",
     "typescript": "^4.0.3"
   },
@@ -79,11 +88,5 @@
   },
   "prettier": {
     "trailingComma": "all"
-  },
-  "jest": {
-    "watchPathIgnorePatterns": [
-      "/node_modules/",
-      "/coverage/"
-    ]
   }
 }
