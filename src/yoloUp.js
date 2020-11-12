@@ -1,55 +1,68 @@
 /* eslint-disable no-console */
 
-const fs = require("fs").promises;
-const { spawn } = require("child_process");
+const { readFile, writeFile } = require("fs").promises;
+const ora = require("ora");
+const inferPackageManager = require("./inferPackageManager");
+const installDependencies = require("./installDependencies");
+const tryToRemove = require("./tryToRemove");
+const lockFiles = require("./lockFiles");
+const symbols = require("./symbols");
 
-function spawnPromise(command, args, options) {
-  return new Promise((resolve, reject) => {
-    spawn(command, args, options).on("close", (code) =>
-      code === 0 ? resolve(code) : reject(code),
-    );
-  });
-}
+const success = { symbol: symbols.success };
 
-async function removeTry(file) {
+async function yoloUp({ projectRoot, packageManager }) {
+  const spinner = ora();
+
   try {
-    const stat = await fs.stat(file);
-    console.log(`Removing ${file}`);
+    process.chdir(projectRoot);
 
-    if (stat.isDirectory()) {
-      await fs.rmdir(file, { recursive: true });
-    } else {
-      await fs.unlink(file);
+    if (packageManager === "infer") {
+      spinner.start("Inferring package manager with lock files");
+      packageManager = await inferPackageManager();
+      spinner.stopAndPersist({
+        symbol: symbols.success,
+        text: `Using ${packageManager} package manger`,
+      });
+    }
+
+    spinner.start("Reading package.json");
+    const packageJson = await readFile("package.json", "utf-8");
+    const parsedPackageJson = JSON.parse(packageJson);
+    const { devDependencies = {}, dependencies = {} } = parsedPackageJson;
+    spinner.stopAndPersist(success);
+
+    await tryToRemove(spinner, "node_modules");
+    await tryToRemove(spinner, lockFiles.get(packageManager));
+
+    spinner.start("Removing dependencies from package.json");
+    parsedPackageJson.dependencies = {};
+    parsedPackageJson.devDependencies = {};
+    await writeFile("package.json", JSON.stringify(parsedPackageJson, null, 2));
+    spinner.stopAndPersist(success);
+
+    try {
+      spinner.start("Installing dependencies");
+      await installDependencies(packageManager, dependencies);
+      spinner.stopAndPersist(success);
+
+      spinner.start("Installing dev dependencies");
+      await installDependencies(packageManager, devDependencies, true);
+      spinner.stopAndPersist(success);
+    } catch (error) {
+      spinner.stopAndPersist({ symbol: symbols.error, text: error.message });
+      console.error(error);
+
+      spinner.start("Restoring package.json");
+      await writeFile("package.json", packageJson);
+      spinner.stopAndPersist({
+        symbol: symbols.warning,
+        text: "package.json restored",
+      });
     }
   } catch (error) {
-    if (error.code !== "ENOENT") {
-      console.error(error);
-    }
+    spinner.stopAndPersist({ symbol: symbols.error, text: error.message });
+    console.error(error);
   }
-}
-
-async function yoloUp({ projectRoot }) {
-  process.chdir(projectRoot);
-
-  const packageJson = JSON.parse(await fs.readFile("package.json", "utf-8"));
-  const devDependencies = Object.keys(packageJson.devDependencies || {});
-  const dependencies = Object.keys(packageJson.dependencies || {});
-
-  await removeTry("node_modules");
-  await removeTry("package-lock.json");
-
-  console.log("Removing dependencies from package.json");
-  packageJson.dependencies = {};
-  packageJson.devDependencies = {};
-  await fs.writeFile("package.json", JSON.stringify(packageJson, null, 2));
-
-  console.log("Installing dependencies");
-  await spawnPromise("npm", ["install", ...dependencies], { stdio: "inherit" });
-
-  console.log("Installing dev dependencies");
-  await spawnPromise("npm", ["install", ...devDependencies, "--save-dev"], {
-    stdio: "inherit",
-  });
 }
 
 module.exports = yoloUp;

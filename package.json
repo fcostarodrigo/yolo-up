@@ -29,6 +29,8 @@
   },
   "homepage": "https://github.com/fcostarodrigo/yolo-up#readme",
   "dependencies": {
+    "chalk": "^4.1.0",
+    "ora": "^5.1.0",
     "yargs": "^16.1.0"
   },
   "devDependencies": {
@@ -63,6 +65,7 @@
       "no-await-in-loop": "off",
       "no-restricted-syntax": "off",
       "prettier/prettier": "error",
+      "no-param-reassign": "off",
       "tsc/config": [
         "error",
         {
