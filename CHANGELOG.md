@@ -1,3 +1,7 @@
+# 1.3.0
+
+- List all breaking changes.
+
 # 1.2.0
 
 - Add support for yarn and pnpm.

@@ -3,7 +3,7 @@ const spawnPromise = require("./spawnPromise");
 function installDependencies(
   packageManager,
   dependencies,
-  development = false,
+  development = false
 ) {
   const args = [];
 
