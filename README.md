@@ -2,7 +2,7 @@
 
 Update dependencies of a npm package.
 
-- Delete `node_packages`, `package-lock.json`, list all dependencies and install them again to the latest version.
+- Delete `node_packages`, `package-lock.json`, list all dependencies and install them again to the latest version. Breaking changes are reported.
 
 ## Setup
 
@@ -27,7 +27,7 @@ Options:
 
 ## Changelog
 
-[Change Log](CHANGELOG.MD)
+[Change Log](CHANGELOG.md)
 
 ## License
 

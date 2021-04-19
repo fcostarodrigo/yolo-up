@@ -2,6 +2,7 @@
 
 const { readFile, writeFile } = require("fs").promises;
 const ora = require("ora");
+const reportBreakingChanges = require("./reportBreakingChanges");
 const inferPackageManager = require("./inferPackageManager");
 const installDependencies = require("./installDependencies");
 const tryToRemove = require("./tryToRemove");
@@ -48,6 +49,8 @@ async function yoloUp({ projectRoot, packageManager }) {
       spinner.start("Installing dev dependencies");
       await installDependencies(packageManager, devDependencies, true);
       spinner.stopAndPersist(success);
+
+      await reportBreakingChanges({ ...devDependencies, ...dependencies });
     } catch (error) {
       spinner.stopAndPersist({ symbol: symbols.error, text: error.message });
       console.error(error);
